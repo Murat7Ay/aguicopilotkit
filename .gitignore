@@ -1,0 +1,26 @@
+# Environment & secrets
+.env
+*.env
+.env.*
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
