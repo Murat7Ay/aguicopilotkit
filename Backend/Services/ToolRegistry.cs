@@ -67,6 +67,17 @@ public class ToolRegistry
 
     public IEnumerable<AITool> GetAllTools() => _tools.Values;
 
+    /// <summary>Tool names and descriptions for the UI catalog (same registry the model uses).</summary>
+    public IReadOnlyList<ToolCatalogEntry> GetCatalogForUi() =>
+        _tools.Values
+            .Select(t => t switch
+            {
+                AIFunction f => new ToolCatalogEntry(f.Name, f.Description),
+                _ => new ToolCatalogEntry(t.GetType().Name, null),
+            })
+            .OrderBy(x => x.Name, StringComparer.Ordinal)
+            .ToList();
+
     private static string? GetArg(IDictionary<string, object?>? args, string key)
     {
         if (args is null) return null;
@@ -155,3 +166,5 @@ public class ToolRegistry
         }));
     }
 }
+
+public sealed record ToolCatalogEntry(string Name, string? Description);

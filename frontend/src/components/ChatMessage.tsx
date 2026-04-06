@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import type { ChatMessage as ChatMessageType, ToolCall } from '../hooks/useAgUI'
+import { chatSurface } from '../config/chatSurface'
 
 interface Props {
   message: ChatMessageType
@@ -182,14 +183,14 @@ export default function ChatMessage({ message }: Props) {
               color: '#fff',
               flexShrink: 0,
             }}>
-              A
+              {chatSurface.branding.logoLetter}
             </div>
             <span style={{
               fontSize: '12px',
               color: 'var(--text-muted)',
               fontWeight: 500,
             }}>
-              AI Assistant
+              {chatSurface.branding.assistantMessageLabel}
             </span>
           </div>
         )}

@@ -56,7 +56,7 @@ export default function ChatInput({ onSend, onStop, isStreaming, disabled }: Pro
         onChange={handleInput}
         onKeyDown={handleKeyDown}
         placeholder="Type a message... (Shift+Enter for new line)"
-        disabled={disabled}
+        disabled={!!disabled || isStreaming}
         rows={1}
         style={{
           flex: 1,

@@ -55,5 +55,8 @@ app.MapPost("/agui", async (HttpContext context, IChatClient chatClient, ToolReg
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
-var port = builder.Configuration["PORT"] ?? "5000";
+app.MapGet("/tools", (ToolRegistry toolRegistry) =>
+    Results.Json(new { tools = toolRegistry.GetCatalogForUi() }));
+
+var port = builder.Configuration["PORT"] ?? "5041";
 app.Run($"http://0.0.0.0:{port}");

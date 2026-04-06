@@ -1,19 +1,16 @@
 import React, { useRef, useEffect } from 'react'
 import { useAgUI } from './hooks/useAgUI'
+import { useToolCatalog } from './hooks/useToolCatalog'
+import { chatSurface } from './config/chatSurface'
 import ChatMessage from './components/ChatMessage'
 import ChatInput from './components/ChatInput'
-
-const SUGGESTIONS = [
-  "What's the weather in Istanbul?",
-  "Search the web for AG-UI protocol",
-  "What time is it now?",
-  "Calculate 42 * 17 + 99",
-  "Translate 'Hello World' to Turkish",
-]
 
 export default function App() {
   const { messages, isStreaming, error, sendMessage, stopStreaming, clearMessages } = useAgUI('/agui')
   const scrollRef = useRef<HTMLDivElement>(null)
+  const showCatalog =
+    chatSurface.emptyState.showToolCatalog && messages.length === 0
+  const { tools, loadError: toolsLoadError } = useToolCatalog(showCatalog)
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -38,7 +35,13 @@ export default function App() {
         borderBottom: '1px solid var(--border)',
         flexShrink: 0,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          minWidth: 0,
+          flex: '1 1 auto',
+        }}>
           <div style={{
             width: '36px',
             height: '36px',
@@ -51,26 +54,36 @@ export default function App() {
             fontWeight: 700,
             color: '#fff',
           }}>
-            A
+            {chatSurface.branding.logoLetter}
           </div>
           <div>
             <h1 style={{
               fontSize: '16px',
               fontWeight: 700,
               letterSpacing: '-0.3px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}>
-              AG-UI Chat Demo
+              {chatSurface.branding.appName}
             </h1>
             <p style={{
               fontSize: '12px',
               color: 'var(--text-muted)',
             }}>
-              .NET 10 Backend + AG-UI Protocol + MCP Tools
+              {chatSurface.branding.headerSubtitle}
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          flexShrink: 0,
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end',
+        }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -89,7 +102,7 @@ export default function App() {
               background: isStreaming ? 'var(--warning)' : 'var(--success)',
               animation: isStreaming ? 'pulse 1s infinite' : 'none',
             }} />
-            {isStreaming ? 'Streaming...' : 'Ready'}
+            {isStreaming ? chatSurface.status.streaming : chatSurface.status.ready}
           </div>
 
           {messages.length > 0 && (
@@ -108,7 +121,7 @@ export default function App() {
                 transition: 'all 0.2s',
               }}
             >
-              Clear Chat
+              {chatSurface.actions.clearChat}
             </button>
           )}
         </div>
@@ -119,7 +132,9 @@ export default function App() {
         ref={scrollRef}
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
+          overflowX: 'hidden',
           padding: '20px 24px',
         }}
       >
@@ -145,7 +160,7 @@ export default function App() {
               color: '#fff',
               boxShadow: '0 8px 32px var(--accent-glow)',
             }}>
-              A
+              {chatSurface.branding.logoLetter}
             </div>
             <div>
               <h2 style={{
@@ -154,7 +169,7 @@ export default function App() {
                 marginBottom: '8px',
                 letterSpacing: '-0.5px',
               }}>
-                AG-UI + .NET 10 Demo
+                {chatSurface.branding.emptyTitle}
               </h2>
               <p style={{
                 color: 'var(--text-muted)',
@@ -162,8 +177,7 @@ export default function App() {
                 maxWidth: '400px',
                 lineHeight: 1.6,
               }}>
-                Chat with an AI assistant powered by OpenAI, served through a .NET 10 backend
-                implementing the AG-UI protocol with MCP tool support.
+                {chatSurface.branding.emptyBody}
               </p>
             </div>
 
@@ -174,10 +188,10 @@ export default function App() {
               justifyContent: 'center',
               maxWidth: '600px',
             }}>
-              {SUGGESTIONS.map((s, i) => (
+              {chatSurface.starterPrompts.map(p => (
                 <button
-                  key={i}
-                  onClick={() => sendMessage(s)}
+                  key={p.id}
+                  onClick={() => sendMessage(p.prompt)}
                   style={{
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border)',
@@ -197,48 +211,80 @@ export default function App() {
                     e.currentTarget.style.color = 'var(--text-secondary)'
                   }}
                 >
-                  {s}
+                  {p.label ?? p.prompt}
                 </button>
               ))}
             </div>
 
-            <div style={{
-              display: 'flex',
-              gap: '16px',
-              marginTop: '12px',
-            }}>
-              {[
-                { label: 'get_weather', desc: 'Weather data' },
-                { label: 'search_web', desc: 'Web search' },
-                { label: 'calculate', desc: 'Math engine' },
-                { label: 'get_current_time', desc: 'Time info' },
-                { label: 'translate_text', desc: 'Translation' },
-              ].map((tool, i) => (
-                <div key={i} style={{
+            {chatSurface.emptyState.showToolCatalog && (
+              <div style={{ width: '100%', maxWidth: '640px', marginTop: '8px' }}>
+                <div style={{
+                  fontSize: '11px',
+                  color: 'var(--text-muted)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  marginBottom: '10px',
                   textAlign: 'center',
-                  padding: '10px',
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '10px',
-                  minWidth: '90px',
                 }}>
-                  <div style={{
-                    fontSize: '11px',
-                    fontFamily: 'monospace',
-                    color: 'var(--accent-light)',
-                    marginBottom: '4px',
-                  }}>
-                    {tool.label}
-                  </div>
-                  <div style={{
-                    fontSize: '10px',
-                    color: 'var(--text-muted)',
-                  }}>
-                    {tool.desc}
-                  </div>
+                  {chatSurface.emptyState.toolSectionTitle}
                 </div>
-              ))}
-            </div>
+                {toolsLoadError && (
+                  <p style={{
+                    textAlign: 'center',
+                    fontSize: '12px',
+                    color: 'var(--warning)',
+                    marginBottom: '8px',
+                  }}>
+                    {toolsLoadError}
+                  </p>
+                )}
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '10px',
+                  justifyContent: 'center',
+                  width: '100%',
+                }}>
+                  {tools === null && !toolsLoadError && (
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      Araç listesi yükleniyor…
+                    </span>
+                  )}
+                  {tools?.map(tool => (
+                    <div
+                      key={tool.name}
+                      style={{
+                        textAlign: 'center',
+                        padding: '10px',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '10px',
+                        minWidth: 'min(90px, 28vw)',
+                        flex: '1 1 auto',
+                        maxWidth: '160px',
+                      }}
+                    >
+                      <div style={{
+                        fontSize: '11px',
+                        fontFamily: 'monospace',
+                        color: 'var(--accent-light)',
+                        marginBottom: '4px',
+                        wordBreak: 'break-all',
+                      }}>
+                        {tool.name}
+                      </div>
+                      <div style={{
+                        fontSize: '10px',
+                        color: 'var(--text-muted)',
+                        lineHeight: 1.35,
+                      }}>
+                        {tool.description ?? '—'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

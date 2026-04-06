@@ -9,7 +9,11 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/agui': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5041',
+        changeOrigin: true,
+      },
+      '/tools': {
+        target: 'http://localhost:5041',
         changeOrigin: true,
       },
     },
