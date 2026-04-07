@@ -1,0 +1,69 @@
+:root {
+  /* Let CopilotKit inherit our existing theme variables from index.css */
+}
+
+/* Make CopilotKit chat feel native to our dark UI */
+.copilotKitChat,
+.copilotKitWindow {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.copilotKitMessages {
+  padding: 18px 24px !important;
+}
+
+.copilotKitMessagesContainer {
+  background: var(--bg-primary) !important;
+}
+
+.copilotKitUserMessage {
+  background: linear-gradient(135deg, var(--accent), #7c6cf0) !important;
+  color: #fff !important;
+  border-radius: 18px 18px 4px 18px !important;
+  box-shadow: 0 2px 12px rgba(108, 92, 231, 0.3) !important;
+}
+
+.copilotKitAssistantMessage {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 18px 18px 18px 4px !important;
+}
+
+.copilotKitInput {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border) !important;
+  padding: 14px 18px !important;
+}
+
+.copilotKitInput textarea,
+.copilotKitInput input,
+.copilotKitInput [contenteditable="true"] {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+}
+
+.copilotKitMarkdown a {
+  color: var(--accent-light) !important;
+}
+
+/* Hide dev/branding UI in our internal tool */
+.copilotKitDevConsole,
+.copilotKitVersionInfo,
+.copilotKitDebugMenuButton,
+.copilotKitDebugMenu {
+  display: none !important;
+}
+
+/* CopilotKit UI branding and inspector widgets */
+.poweredBy {
+  display: none !important;
+}
+
+.console-button {
+  display: none !important;
+}
+
